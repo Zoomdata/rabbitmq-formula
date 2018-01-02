@@ -1,0 +1,42 @@
+default:
+  service: rabbitmq-server
+
+Debian:
+  dependencies:
+    # Downloading tools
+    - ca-certificates
+    - wget
+
+  erlang_repo:
+    install: >-
+      wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb &&
+      dpkg -i erlang-solutions_1.0_all.deb;
+      rm -f erlang-solutions_1.0_all.deb
+    file: /etc/apt/sources.list.d/erlang-solutions.list
+
+  repo:
+    install: 'wget -q -O - https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.deb.sh | bash'
+    file: /etc/apt/sources.list.d/rabbitmq_rabbitmq-server.list
+
+  packages:
+    - rabbitmq-server
+
+RedHat:
+  dependencies:
+    # Downloading tools
+    - ca-certificates
+    - curl
+    # This is required for systemd integration
+    - socat
+
+  erlang_repo:
+    install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash'
+    file: /etc/yum.repos.d/rabbitmq_erlang.repo
+
+  repo:
+    install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash'
+    file: /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+
+  packages:
+    - erlang
+    - rabbitmq-server

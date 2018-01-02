@@ -1,0 +1,9 @@
+{% import_yaml 'rabbitmq/os_family.yaml' as osfamily_map %}
+
+{# Merge Pillar items with defaults #}
+{% set rabbitmq = salt['grains.filter_by'](
+    osfamily_map,
+    grain='os_family',
+    merge=salt['pillar.get']('rabbitmq', {}),
+    base='default',
+) %}
