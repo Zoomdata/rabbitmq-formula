@@ -14,6 +14,17 @@ rabbitmq/Configure official RabbitMQ repo:
     - name: {{ rabbitmq.repo.install }}
     - creates: {{ rabbitmq.repo.file }}
 
+{%- for repo in rabbitmq.repo.disable %}
+
+rabbitmq/Disable {{ repo }} repo:
+  pkgrepo.managed:
+    - name: {{ repo }}
+    - enabled: False
+    - onchanges:
+      - cmd: rabbitmq/Configure official RabbitMQ repo
+
+{%- endfor %}
+
 rabbitmq/Install RabbitMQ server:
   pkg.installed:
     - pkgs: {{ rabbitmq.packages }}

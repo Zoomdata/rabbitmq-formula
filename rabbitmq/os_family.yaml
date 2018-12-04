@@ -17,6 +17,7 @@ Debian:
   repo:
     install: 'wget -q -O - https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.deb.sh | bash'
     file: /etc/apt/sources.list.d/rabbitmq_rabbitmq-server.list
+    disable: []
 
   packages:
     - rabbitmq-server
@@ -36,6 +37,9 @@ RedHat:
   repo:
     install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash'
     file: /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+    disable:
+      # Nobody usually needs the source packages
+      - rabbitmq_rabbitmq-server-source
 
   packages:
     - erlang
