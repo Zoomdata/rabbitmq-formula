@@ -27,7 +27,8 @@ RedHat:
     # Downloading tools
     - ca-certificates
     - curl
-    # This is required for systemd integration
+    # This is required for systemd integration.
+    # Make sure you have EPEL repository enabled.
     - socat
 
   erlang_repo:
@@ -37,6 +38,15 @@ RedHat:
   repo:
     install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash'
     file: /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+    # We need to verify the key was changed and import the new one
+    # in order to make any subsequent yum operations to work without a prompt
+    key_url: 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey'
+    # This is not really in use and serves as a original file to compare with
+    # the remote GPG key
+    key_file: /etc/pki/rpm-gpg/RPM-GPG-KEY-RABBITMQ
+    # Install the new key if available and refresh yum cache for these repos
+    refresh:
+      - rabbitmq_rabbitmq-server
     disable:
       # Nobody usually needs the source packages
       - rabbitmq_rabbitmq-server-source
