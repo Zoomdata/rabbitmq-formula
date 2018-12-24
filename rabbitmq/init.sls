@@ -1,33 +1,37 @@
 {%- from 'rabbitmq/map.jinja' import rabbitmq %}
 
-{%- if 'key_url' in rabbitmq.repo and
-       'key_file' in rabbitmq.repo and
-       'refresh' in rabbitmq.repo %}
+{%- for component_repo in (rabbitmq.erlang_repo, rabbitmq.repo) %}
+
+  {%- if 'key_url'  in component_repo and
+         'key_file' in component_repo and
+         'refresh'  in component_repo %}
 
 # These states for handling the GPG key are specific to YUM/RedHat.
 # The APT on Debian derivatives doesn't need any special care.
 
-rabbitmq/Install GPG key file:
+rabbitmq/Install {{ salt['file.basename'](component_repo.key_file) }}:
   file.managed:
-    - name: {{ rabbitmq.repo.key_file }}
-    - source: {{ rabbitmq.repo.key_url }}
+    - name: {{ component_repo.key_file }}
+    - source: {{ component_repo.key_url }}
     - skip_verify: True
     - user: root
     - group: root
     - mode: 0644
 
-  {%- for repo in rabbitmq.repo.refresh %}
+    {%- for repo in component_repo.refresh %}
 
 rabbitmq/Refresh cache and import the new key for {{ repo }}:
   cmd.run:
     - name: yum -q makecache -y --disablerepo='*' --enablerepo='{{ repo }}'
     - onchanges:
-      - file: rabbitmq/Install GPG key file
-    - onlyif: test -f {{ rabbitmq.repo.file }}
+      - file: {{ component_repo.key_file }}
+    - onlyif: test -f {{ component_repo.file }}
 
-  {%- endfor %}
+    {%- endfor %}
 
-{%- endif %}
+  {%- endif %}
+
+{%- endfor %}
 
 rabbitmq/Install dependencies:
   pkg.latest:
@@ -44,14 +48,16 @@ rabbitmq/Configure official RabbitMQ repo:
     - name: {{ rabbitmq.repo.install }}
     - creates: {{ rabbitmq.repo.file }}
 
-{%- for repo in rabbitmq.repo.disable %}
+{%- for component_repo in (rabbitmq.erlang_repo, rabbitmq.repo) %}
+
+  {%- for repo in component_repo.disable %}
 
 rabbitmq/Disable {{ repo }} repo:
   pkgrepo.managed:
     - name: {{ repo }}
     - enabled: False
-    - require:
-      - cmd: rabbitmq/Configure official RabbitMQ repo
+
+  {%- endfor %}
 
 {%- endfor %}
 
