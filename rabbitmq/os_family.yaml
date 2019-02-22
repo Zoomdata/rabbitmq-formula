@@ -1,6 +1,3 @@
-default:
-  service: rabbitmq-server
-
 Debian:
   dependencies:
     # Downloading tools
@@ -67,3 +64,6 @@ RedHat:
   packages:
     - erlang
     - rabbitmq-server
+
+default:
+  service: rabbitmq-server

@@ -1,0 +1,57 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml sts=2 sw=2 et
+
+# RabbitMQ formula Pillar example
+# ===============================
+
+# All these settings are OS specific. Here we provide examples for RHEL/CentOS.
+rabbitmq:
+  # Packages required to deploy, run or operate RabbitMQ.
+  dependencies:
+    - ca-certificates
+    - curl
+
+  # Erlang repository setup
+  erlang_repo:
+    # Inline script to configure upstream Erlang packages repository
+    install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash'
+    # The script above should create the following file
+    file: /etc/yum.repos.d/rabbitmq_erlang.repo
+    # The GPG public key file from ``key_url`` will be saved into ``key_file``.
+    # Subsequent state run would check if they match to deside if the
+    # repository should be refreshed.
+    key_url: 'https://packagecloud.io/rabbitmq/erlang/gpgkey'
+    key_file: /etc/pki/rpm-gpg/RPM-GPG-KEY-ERLANG
+    # Which repositories are needed to refreshed when the public key was changed
+    refresh:
+      - rabbitmq_erlang
+    disable:
+      # Disable source packages repository
+      - rabbitmq_erlang-source
+
+
+  # RabbitMQ repository setup
+  repo:
+    # Inline script to configure upstream RabbitMQ packages repository
+    install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash'
+    # The script above should create the following file
+    file: /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+    # The GPG public key file from ``key_url`` will be saved into ``key_file``.
+    # Subsequent state run would check if they match to deside if the
+    # repository should be refreshed.
+    key_url: 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey'
+    key_file: /etc/pki/rpm-gpg/RPM-GPG-KEY-RABBITMQ
+    # Which repositories are needed to refreshed when the public key was changed
+    refresh:
+      - rabbitmq_rabbitmq-server
+    disable:
+      # Disable source packages repository
+      - rabbitmq_rabbitmq-server-source
+
+  # Packages to install
+  packages:
+    - erlang
+    - rabbitmq-server
+
+  # Service to start and enable
+  service: rabbitmq-server
