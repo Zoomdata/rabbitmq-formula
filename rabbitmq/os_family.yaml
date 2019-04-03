@@ -18,6 +18,7 @@ Debian:
     disable: []
 
   packages:
+    - erlang-solutions
     - rabbitmq-server
 
 RedHat:
@@ -25,9 +26,6 @@ RedHat:
     # Downloading tools
     - ca-certificates
     - curl
-    # This is required for systemd integration.
-    # Make sure you have EPEL repository enabled.
-    - socat
 
   erlang_repo:
     install: 'curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash'
@@ -64,6 +62,9 @@ RedHat:
   packages:
     - erlang
     - rabbitmq-server
+    # This is required for systemd integration.
+    # Make sure you have EPEL repository enabled.
+    - socat
 
 default:
   service: rabbitmq-server
