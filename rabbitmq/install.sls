@@ -35,7 +35,7 @@ rabbitmq/Refresh cache and import the new key for {{ repo }}:
 
 rabbitmq/Install dependencies:
   pkg.latest:
-    - pkgs: {{ rabbitmq.dependencies }}
+    - pkgs: {{ rabbitmq.dependencies|yaml }}
     - onlyif: test ! -f {{ rabbitmq.repo.file }}
 
 rabbitmq/Configure Erlang repo:
@@ -63,7 +63,7 @@ rabbitmq/Disable {{ repo }} repo:
 
 rabbitmq/Install RabbitMQ server:
   pkg.installed:
-    - pkgs: {{ rabbitmq.packages }}
+    - pkgs: {{ rabbitmq.packages|yaml }}
     - require:
       - rabbitmq/Configure Erlang repo
       - rabbitmq/Configure official RabbitMQ repo
